@@ -48,22 +48,22 @@ The repo includes sample configs you can customize:
 	•	generate_traffic.sh – Script to simulate or replay PCAP traffic
 
 ## ▶️ How to Use
-	1.	Start Suricata
+1. Start Suricata
  sudo suricata -c suricata.yaml -i <interface>
 
- 	2.	Start Zeek
+2. Start Zeek
   zeek -i <interface>
 
-  3.	Load Logstash Pipeline
+3. Load Logstash Pipeline
   sudo logstash -f logstash.conf
 
-  4.	Import Elasticsearch Template
+4. Import Elasticsearch Template
   curl -X PUT "localhost:9200/_template/nids" -H 'Content-Type: application/json' -d @template.json
 
- 	5.	Run Kibana and access the web interface at:
+5. Run Kibana and access the web interface at:
   http://localhost:5601
 
-  6.	Generate Traffic for Testing
+6. Generate Traffic for Testing
   bash generate_traffic.sh
 
 ## 📊 Visualization

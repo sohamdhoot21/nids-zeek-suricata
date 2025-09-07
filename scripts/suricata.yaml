@@ -1,0 +1,160 @@
+%YAML 1.1
+---
+default-log-dir: /var/log/suricata/
+
+af-packet:
+  - interface: en0
+    threads: auto
+    defrag: yes
+    cluster-type: cluster_flow
+    cluster-id: 99
+    copy-mode: ips
+    copy-iface: en0
+    buffer-size: 64535
+    use-mmap: yes
+    tpacket-v3: yes
+
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      types:
+        - alert
+        - http
+        - dns
+        - tls
+        - ssh
+        - smtp
+        - flow
+        - netflow
+        - stats
+        - file
+        - ftp
+        - rdp
+        - nfs
+        - smb
+        - tftp
+        - ikev2
+        - dcerpc
+        - dhcp
+      
+      elasticsearch:
+        enabled: no
+      rotate-interval: 3600
+      
+  - alert-debug:
+      enabled: yes
+      filename: alert-debug.log
+      
+  - alert-fast:
+      enabled: yes
+      filename: fast.log
+      
+  - stats:
+      enabled: yes
+      filename: stats.log
+      interval: 60
+      
+  - drop:
+      enabled: yes
+      filename: drop.log
+
+detect-engine:
+  profile: medium
+  sgh-mpm-context: auto
+  inspection-recursion-limit: 3000
+  delay-detect: no
+  prefilter:
+    default: mpm
+  mpm-algo: auto
+  
+  sgh-mpm-context: auto
+  inspect-blocked: yes
+
+default-rule-path: /opt/homebrew/var/lib/suricata/rules
+rule-files:
+  - suricata.rules
+  - emerging-all.rules
+  - emerging-current_events.rules
+  - emerging-attack_response.rules
+  - emerging-exploit.rules
+  - emerging-malware.rules
+  - emerging-scan.rules
+  - emerging-suspicious.rules
+  - emerging-trojan.rules
+  - emerging-user_agents.rules
+  - emerging-virus.rules
+  - emerging-web_client.rules
+  - emerging-web_server.rules
+  - emerging-web_specific_apps.rules
+  - emerging-worm.rules
+
+default-rule-action: alert
+
+vars:
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+    EXTERNAL_NET: "!$HOME_NET"
+    HTTP_SERVERS: "$HOME_NET"
+    SQL_SERVERS: "$HOME_NET"
+    DNS_SERVERS: "$HOME_NET"
+    SMTP_SERVERS: "$HOME_NET"
+    TELNET_SERVERS: "$HOME_NET"
+    AIM_SERVERS: "$EXTERNAL_NET"
+    DC_SERVERS: "$HOME_NET"
+    DNP3_SERVER: "$HOME_NET"
+    DNP3_CLIENT: "$HOME_NET"
+    MODBUS_CLIENT: "$HOME_NET"
+    MODBUS_SERVER: "$HOME_NET"
+    ENIP_CLIENT: "$HOME_NET"
+    ENIP_SERVER: "$HOME_NET"
+  port-groups:
+    HTTP_PORTS: "80"
+    SHELLCODE_PORTS: "!80"
+    ORACLE_PORTS: 1521
+    SSH_PORTS: 22
+    DNP3_PORTS: 20000
+    MODBUS_PORTS: 502
+    FILE_DATA_PORTS: "[$HTTP_PORTS,110,143]"
+    FTP_PORTS: 21
+    SIP_PORTS: "[5060,5061]"
+    H323_PORTS: "[1720]"
+    RDP_PORTS: 3389
+    VNC_PORTS: "[5900,5901,5902,5903,5904,5905,5906,5907,5908,5909]"
+    TEREDO_PORTS: "[3544]"
+
+app-layer:
+  protocols:
+    http:
+      enabled: yes
+    tls:
+      enabled: yes
+    ssh:
+      enabled: yes
+    smtp:
+      enabled: yes
+    dnp3:
+      enabled: yes
+      detection-enabled: yes
+      decoder-events: yes
+      ports: [20000]
+    modbus:
+      enabled: yes
+      detection-enabled: yes
+      decoder-events: yes
+      ports: [502]
+    dns:
+      enabled: yes
+    ftp:
+      enabled: yes
+    rdp:
+      enabled: yes
+    nfs:
+      enabled: yes
+    smb:
+      enabled: yes
+    dcerpc:
+      enabled: yes
+    dhcp:
+      enabled: yes 
